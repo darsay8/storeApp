@@ -1,7 +1,7 @@
 import {createStackNavigator} from '@react-navigation/stack';
-import LoginScreen from '../screens/LoginScreen';
-import RegisterScreen from '../screens/RegisterScreen';
-import ProtectedScreen from '../screens/ProtectedScreen';
+import LoginScreen from '../hooks/screens/LoginScreen';
+import RegisterScreen from '../hooks/screens/RegisterScreen';
+import ProtectedScreen from '../hooks/screens/ProtectedScreen';
 
 const Stack = createStackNavigator();
 
