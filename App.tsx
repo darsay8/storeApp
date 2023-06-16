@@ -1,11 +1,18 @@
-import { NavigationContainer } from '@react-navigation/native';
-import { Navigator } from './src/navigator/Navigator';
+import {NavigationContainer} from '@react-navigation/native';
+import {Navigator} from './src/navigator/Navigator';
+import {AuthProvider} from './src/context/authContext';
+
+const AppState = ({children}: {children: JSX.Element | JSX.Element[]}) => {
+  return <AuthProvider>{children}</AuthProvider>;
+};
 
 const App = () => {
   return (
     <NavigationContainer>
-      <Navigator/>
+      <AppState>
+        <Navigator />
+      </AppState>
     </NavigationContainer>
-  )
-}
-export default App
+  );
+};
+export default App;
