@@ -1,6 +1,7 @@
 import {createContext, useReducer} from 'react';
-import {User} from '../interfaces/appInterfaces';
+import {LoginData, LoginResponse, User} from '../interfaces/appInterfaces';
 import {AuthState, authReducer} from './authReducer';
+import storeApi from '../api/storeApi';
 
 type AuthContextProps = {
   errorMessage: string;
@@ -8,7 +9,7 @@ type AuthContextProps = {
   user: User | null;
   status: 'checking' | 'authenticated' | 'not-authenticated';
   signUp: () => void;
-  signIn: () => void;
+  signIn: (loginData: LoginData) => void;
   logOut: () => void;
   removeError: () => void;
 };
@@ -25,8 +26,21 @@ export const AuthContext = createContext({} as AuthContextProps);
 export const AuthProvider = ({children}: any) => {
   const [state, dispatch] = useReducer(authReducer, authInitialState);
 
+  const signIn = async ({correo, password}: LoginData) => {
+    console.log('dfvwqdf');
+    try {
+      const res = await storeApi.post<LoginResponse>('/auth/login', {
+        correo,
+        password,
+      });
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const signUp = () => {};
-  const signIn = () => {};
+
   const logOut = () => {};
   const removeError = () => {};
 
