@@ -27,15 +27,20 @@ export const AuthProvider = ({children}: any) => {
   const [state, dispatch] = useReducer(authReducer, authInitialState);
 
   const signIn = async ({correo, password}: LoginData) => {
-    console.log('dfvwqdf');
     try {
-      const res = await storeApi.post<LoginResponse>('/auth/login', {
+      const {data} = await storeApi.post<LoginResponse>('/auth/login', {
         correo,
         password,
       });
-      console.log(res);
-    } catch (error) {
-      console.log(error);
+      dispatch({
+        type: 'signUp',
+        payload: {
+          token: data.token,
+          user: data.usuario,
+        },
+      });
+    } catch (error: any) {
+      console.log(error.response.data.msg);
     }
   };
 
