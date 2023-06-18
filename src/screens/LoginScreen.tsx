@@ -1,5 +1,6 @@
-import {useContext} from 'react';
+import {useContext, useEffect} from 'react';
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -18,12 +19,19 @@ import {AuthContext} from '../context/authContext';
 interface Props extends StackScreenProps<any, any> {}
 
 const LoginScreen = ({navigation}: Props) => {
-  const {signIn} = useContext(AuthContext);
+  const {signIn, removeError, errorMessage} = useContext(AuthContext);
 
   const {email, password, onChange} = useForm({
     email: '',
     password: '',
   });
+
+  useEffect(() => {
+    if (errorMessage.length === 0) return;
+    Alert.alert('Error:', errorMessage, [
+      {text: 'Ok', onPress: () => removeError()},
+    ]);
+  }, [errorMessage]);
 
   const onLogin = () => {
     Keyboard.dismiss();
