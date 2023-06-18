@@ -1,4 +1,5 @@
 import {
+  Alert,
   Keyboard,
   KeyboardAvoidingView,
   Platform,
@@ -12,18 +13,29 @@ import {loginStyles} from '../theme/loginTheme';
 import WhiteLogo from '../components/WhiteLogo';
 import {useForm} from '../hooks/useForm';
 import {StackScreenProps} from '@react-navigation/stack';
+import {useContext, useEffect} from 'react';
+import {AuthContext} from '../context/authContext';
 
 interface Props extends StackScreenProps<any, any> {}
 
 const RegisterScreen = ({navigation}: Props) => {
+  const {signUp, removeError, errorMessage} = useContext(AuthContext);
   const {email, password, name, onChange} = useForm({
     name: '',
     email: '',
     password: '',
   });
 
+  useEffect(() => {
+    if (errorMessage.length === 0) return;
+    Alert.alert('Error:', errorMessage, [
+      {text: 'Ok', onPress: () => removeError()},
+    ]);
+  }, [errorMessage]);
+
   const onRegister = () => {
     Keyboard.dismiss();
+    signUp({nombre: name, correo: email, password});
   };
 
   return (
