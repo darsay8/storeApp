@@ -41,6 +41,8 @@ export const AuthProvider = ({children}: any) => {
       return dispatch({type: 'notAuthenticated'});
     }
 
+    await AsyncStorage.setItem('token', res.data.token);
+
     dispatch({
       type: 'signUp',
       payload: {
@@ -74,7 +76,11 @@ export const AuthProvider = ({children}: any) => {
 
   const signUp = () => {};
 
-  const logOut = () => {};
+  const logOut = async () => {
+    await AsyncStorage.removeItem('token');
+    dispatch({type: 'logout'});
+  };
+
   const removeError = () => {
     dispatch({type: 'removeError'});
   };
