@@ -1,3 +1,4 @@
+//Auth
 export interface LoginData {
   correo: string;
   password: string;
@@ -20,4 +21,24 @@ export interface User {
   correo: string;
   uid: string;
   img?: string;
+}
+// Products
+
+export interface ProductsResponse {
+  total: number;
+  productos: Product[];
+}
+
+export interface Product {
+  precio: number;
+  _id: string;
+  nombre: string;
+  categoria: Categoria;
+  usuario: Categoria;
+  img?: string;
+}
+
+export interface Categoria {
+  _id: string;
+  nombre: string;
 }
