@@ -33,12 +33,23 @@ export interface Product {
   precio: number;
   _id: string;
   nombre: string;
-  categoria: Categoria;
-  usuario: Categoria;
+  categoria: Category;
+  usuario: Category;
   img?: string;
 }
 
-export interface Categoria {
+export interface CategoriesResponse {
+  total: number;
+  categorias: Category[];
+}
+
+export interface Category {
+  _id: string;
+  nombre: string;
+  usuario?: CreatedBy;
+}
+
+export interface CreatedBy {
   _id: string;
   nombre: string;
 }

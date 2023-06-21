@@ -3,8 +3,8 @@ import ProductScreen from '../screens/ProductScreen';
 import ProductsScreen from '../screens/ProductsScreen';
 
 export type ProductsStackParams = {
-  ProductsScreen: undefined;
-  ProductScreen: {id?: string; name?: string};
+  Products: undefined;
+  Product: {id?: string; name?: string};
 };
 
 const Stack = createStackNavigator();
