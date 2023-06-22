@@ -20,7 +20,8 @@ interface Props extends StackScreenProps<ProductsStackParams, 'Product'> {}
 const ProductScreen = ({navigation, route}: Props) => {
   const {id = '', name = ''} = route.params;
 
-  const {loadProductById} = useContext(ProductsContext);
+  const {loadProductById, addProduct, updateProduct} =
+    useContext(ProductsContext);
 
   const {categories} = useCategories();
 
@@ -35,9 +36,9 @@ const ProductScreen = ({navigation, route}: Props) => {
 
   useEffect(() => {
     navigation.setOptions({
-      title: name ? name : 'New Product',
+      title: nombre ? nombre : 'Product Name',
     });
-  }, []);
+  }, [nombre]);
 
   useEffect(() => {
     loadProduct();
@@ -52,6 +53,16 @@ const ProductScreen = ({navigation, route}: Props) => {
       nombre: name,
       img: product.img || '',
     });
+  };
+
+  const saveOrUpdate = async () => {
+    if (id.length > 0) {
+      updateProduct(categoriaId, nombre, id);
+    } else {
+      const tempCategoryId = categoriaId || categories[0]._id;
+      const newProduct = await addProduct(tempCategoryId, nombre);
+      onChange(newProduct._id, '_id');
+    }
   };
 
   return (
@@ -74,13 +85,15 @@ const ProductScreen = ({navigation, route}: Props) => {
           ))}
         </Picker>
 
-        <Button title="Save" onPress={() => {}} color="#5856d6" />
+        <Button title="Save" onPress={saveOrUpdate} color="#5856d6" />
 
-        <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-          <Button title="Camera" onPress={() => {}} color="#5856d6" />
-          <View style={{width: 10}} />
-          <Button title="Gallery" onPress={() => {}} color="#5856d6" />
-        </View>
+        {_id.length > 0 && (
+          <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+            <Button title="Camera" onPress={() => {}} color="#5856d6" />
+            <View style={{width: 10}} />
+            <Button title="Gallery" onPress={() => {}} color="#5856d6" />
+          </View>
+        )}
 
         {img.length > 0 && (
           <Image

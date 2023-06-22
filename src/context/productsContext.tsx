@@ -5,7 +5,7 @@ import storeApi from '../api/storeApi';
 type ProductsContextProps = {
   products: Product[];
   loadProducts: () => Promise<void>;
-  addProduct: (categoryId: string, productName: string) => Promise<void>;
+  addProduct: (categoryId: string, productName: string) => Promise<Product>;
   updateProduct: (
     categoryId: string,
     productName: string,
@@ -30,15 +30,34 @@ export const ProductsProvider = ({children}: any) => {
     setProducts([...res.data.productos]);
   };
 
-  const addProduct = async (categoryId: string, productName: string) => {};
+  const addProduct = async (
+    categoryId: string,
+    productName: string,
+  ): Promise<Product> => {
+    const res = await storeApi.post<Product>('/productos', {
+      nombre: productName,
+      categoria: categoryId,
+    });
+    setProducts([...products, res.data]);
+
+    return res.data;
+  };
 
   const updateProduct = async (
     categoryId: string,
     productName: string,
     productId: string,
-  ) => {};
+  ) => {
+    const res = await storeApi.put<Product>(`/productos/${productId}`, {
+      nombre: productName,
+      categoria: categoryId,
+    });
+    setProducts(products.map(p => (p._id === productId ? res.data : p)));
+  };
 
-  const deleteProduct = async (productId: string) => {};
+  const deleteProduct = async (productId: string) => {
+    const res = await storeApi.delete<Product>(`/productos/${productId}`);
+  };
 
   const loadProductById = async (productId: string): Promise<Product> => {
     const res = await storeApi.get<Product>(`/productos/${productId}`);
