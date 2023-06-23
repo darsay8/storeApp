@@ -1,6 +1,8 @@
 import {createContext, useEffect, useState} from 'react';
 import {Product, ProductsResponse} from '../interfaces/appInterfaces';
 import storeApi from '../api/storeApi';
+import {Asset, ImagePickerResponse} from 'react-native-image-picker';
+import {Platform} from 'react-native';
 
 type ProductsContextProps = {
   products: Product[];
@@ -64,7 +66,49 @@ export const ProductsProvider = ({children}: any) => {
     return res.data;
   };
 
-  const uploadImage = async (data: any, productId: string) => {};
+  const uploadImage = async (data: ImagePickerResponse, productId: string) => {
+    const formData = new FormData();
+    formData.append(
+      'archivo',
+      JSON.stringify({
+        uri:
+          Platform.OS === 'ios'
+            ? data.assets![0].uri!.replace('file://', '')
+            : data.assets![0].uri!,
+        type: data.assets![0].type,
+        fileName: data.assets![0].fileName,
+      }),
+    );
+
+    try {
+      const res = await storeApi.put<Product>(
+        `/uploads/productos${productId}`,
+        formData,
+        {
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+    } catch (error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser
+        // and an instance of http.ClientRequest in node.js
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+      }
+    }
+  };
 
   return (
     <ProductsContext.Provider

@@ -1,4 +1,4 @@
-import {useContext, useEffect} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {
   Button,
   StyleSheet,
@@ -10,6 +10,11 @@ import {
 } from 'react-native';
 import {StackScreenProps} from '@react-navigation/stack';
 import {Picker} from '@react-native-picker/picker';
+import {
+  ImagePickerResponse,
+  launchCamera,
+  launchImageLibrary,
+} from 'react-native-image-picker';
 import {ProductsStackParams} from '../navigator/ProductsNavigator';
 import useCategories from '../hooks/useCategories';
 import {useForm} from '../hooks/useForm';
@@ -20,7 +25,9 @@ interface Props extends StackScreenProps<ProductsStackParams, 'Product'> {}
 const ProductScreen = ({navigation, route}: Props) => {
   const {id = '', name = ''} = route.params;
 
-  const {loadProductById, addProduct, updateProduct} =
+  const [tempUri, setTempUri] = useState<string>();
+
+  const {loadProductById, addProduct, updateProduct, uploadImage} =
     useContext(ProductsContext);
 
   const {categories} = useCategories();
@@ -65,6 +72,15 @@ const ProductScreen = ({navigation, route}: Props) => {
     }
   };
 
+  const takePhoto = () => {
+    launchCamera({mediaType: 'photo', quality: 0.5}, res => {
+      if (res.didCancel) return;
+      if (!res.assets![0].uri) return;
+      setTempUri(res.assets![0].uri);
+      uploadImage(res, _id);
+    });
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -89,7 +105,7 @@ const ProductScreen = ({navigation, route}: Props) => {
 
         {_id.length > 0 && (
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
-            <Button title="Camera" onPress={() => {}} color="#5856d6" />
+            <Button title="Camera" onPress={takePhoto} color="#5856d6" />
             <View style={{width: 10}} />
             <Button title="Gallery" onPress={() => {}} color="#5856d6" />
           </View>
@@ -98,6 +114,12 @@ const ProductScreen = ({navigation, route}: Props) => {
         {img.length > 0 && (
           <Image
             source={{uri: img}}
+            style={{width: '100%', height: 300, marginTop: 20}}
+          />
+        )}
+        {tempUri && (
+          <Image
+            source={{uri: tempUri}}
             style={{width: '100%', height: 300, marginTop: 20}}
           />
         )}
