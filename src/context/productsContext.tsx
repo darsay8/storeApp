@@ -67,45 +67,41 @@ export const ProductsProvider = ({children}: any) => {
   };
 
   const uploadImage = async (data: ImagePickerResponse, productId: string) => {
+    if (
+      !data.assets ||
+      !data.assets[0] ||
+      !data.assets[0].uri ||
+      !data.assets[0].type ||
+      !data.assets[0].fileName
+    )
+      return;
+
+    const fileToUpload = {
+      uri:
+        Platform.OS === 'ios'
+          ? data.assets![0].uri!.replace('file://', '')
+          : data.assets![0].uri!,
+      type: data.assets[0].type,
+      name: data.assets[0].fileName,
+    };
+
     const formData = new FormData();
-    formData.append(
-      'archivo',
-      JSON.stringify({
-        uri:
-          Platform.OS === 'ios'
-            ? data.assets![0].uri!.replace('file://', '')
-            : data.assets![0].uri!,
-        type: data.assets![0].type,
-        fileName: data.assets![0].fileName,
-      }),
-    );
+    formData.append('archivo', fileToUpload);
 
     try {
       const res = await storeApi.put<Product>(
-        `/uploads/productos${productId}`,
+        `/uploads/productos/${productId}`,
         formData,
-        {
-          headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
-          },
-        },
       );
-    } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an instance of XMLHttpRequest in the browser
-        // and an instance of http.ClientRequest in node.js
-        console.log(error.request);
+    } catch (err: any) {
+      if (err.response) {
+        console.log(err.response.data);
+        console.log(err.response.status);
+        console.log(err.response.headers);
+      } else if (err.request) {
+        console.log(err.request);
       } else {
-        // Something happened in setting up the request that triggered an Error
-        console.log('Error', error.message);
+        console.log('Error', err.message);
       }
     }
   };

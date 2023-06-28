@@ -73,12 +73,15 @@ const ProductScreen = ({navigation, route}: Props) => {
   };
 
   const takePhoto = () => {
-    launchCamera({mediaType: 'photo', quality: 0.5}, res => {
-      if (res.didCancel) return;
-      if (!res.assets![0].uri) return;
-      setTempUri(res.assets![0].uri);
-      uploadImage(res, _id);
-    });
+    launchCamera(
+      {mediaType: 'photo', quality: 0.5, cameraType: 'back'},
+      res => {
+        if (res.didCancel) return;
+        if (!res.assets || !res.assets[0] || !res.assets[0].uri) return;
+        setTempUri(res.assets![0].uri);
+        uploadImage(res, _id);
+      },
+    );
   };
 
   return (
