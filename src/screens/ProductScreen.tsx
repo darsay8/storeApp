@@ -84,6 +84,15 @@ const ProductScreen = ({navigation, route}: Props) => {
     );
   };
 
+  const takePhotoFromGallery = () => {
+    launchImageLibrary({mediaType: 'photo', quality: 0.5}, res => {
+      if (res.didCancel) return;
+      if (!res.assets || !res.assets[0] || !res.assets[0].uri) return;
+      setTempUri(res.assets![0].uri);
+      uploadImage(res, _id);
+    });
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView>
@@ -110,7 +119,11 @@ const ProductScreen = ({navigation, route}: Props) => {
           <View style={{flexDirection: 'row', justifyContent: 'center'}}>
             <Button title="Camera" onPress={takePhoto} color="#5856d6" />
             <View style={{width: 10}} />
-            <Button title="Gallery" onPress={() => {}} color="#5856d6" />
+            <Button
+              title="Gallery"
+              onPress={takePhotoFromGallery}
+              color="#5856d6"
+            />
           </View>
         )}
 
